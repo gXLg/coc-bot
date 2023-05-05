@@ -1,0 +1,24 @@
+{
+  "name": "coc-bot",
+  "version": "1.0.0",
+  "description": "A custom bot for my \"coc?\" discord community",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gXLg/coc-bot.git"
+  },
+  "author": "gXLg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gXLg/coc-bot/issues"
+  },
+  "homepage": "https://github.com/gXLg/coc-bot#readme",
+  "dependencies": {
+    "gxlg-asyncdb": "^1.4.4",
+    "gxlg-utils": "^1.1.2",
+    "nullcord": "^2.0.2"
+  }
+}

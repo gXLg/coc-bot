@@ -1,0 +1,98 @@
+[
+  {
+    "name": "setup",
+    "description": "Setup server settings",
+    "default_member_permissions": "32",
+    "dm_permission": false,
+    "options": [
+      {
+        "type": 7,
+        "name": "send_channel",
+        "description": "A channel in which to notify about ongoing clashes"
+      },
+      {
+        "type": 8,
+        "name": "playing_role",
+        "description": "A role to give to currently playing users"
+      },
+      {
+        "type": 8,
+        "name": "ping_role",
+        "description": "A role which to ping about ongoing clashes"
+      },
+      {
+        "type": 8,
+        "name": "winner_role",
+        "description": "A role to give to winners of clashes"
+      },
+      {
+        "type": 3,
+        "name": "winner_time",
+        "description": "The time a winner keeps his role in case of consecutive games in <H>:<M> format"
+      }
+    ]
+  },
+  {
+    "name": "clash",
+    "description": "Start a Clash of Code",
+    "options": [
+      {
+        "type": 3,
+        "name": "url",
+        "description": "The Codingame invite URL to the Clash",
+        "required": true
+      },
+      {
+        "type": 5,
+        "name": "public",
+        "description": "Whether to notify all bot guilds about the Clash, default: False"
+      }
+    ]
+  },
+  {
+    "name": "register",
+    "description": "Connect your Codingame account with discord"
+  },
+  {
+    "name": "time",
+    "description": "Pick time when you are usually available for a game when the party planner is used",
+    "options": [
+      {
+        "type": 3,
+        "name": "time",
+        "description": "Usual time when you are available for a party in <H>:<M>-<H>:<M> 24 hours format",
+        "required": true
+      },
+      {
+        "type": 3,
+        "name": "timezone",
+        "description": "The timezone to use",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "plan",
+    "description": "Plan a party game in your guild, displays the next best time when most people are available",
+    "dm_permission": false,
+    "options": [
+      {
+        "type": 3,
+        "name": "time",
+        "description": "Planned party game duration in <H>:<M> format",
+        "required": true
+      }
+    ]
+  },
+  {
+    "name": "stats",
+    "description": "Show statistics about you or another user",
+    "options": [
+      {
+        "type": 6,
+        "name": "user",
+        "description": "User"
+      }
+    ]
+  }
+]
