@@ -55,46 +55,38 @@
   async function setStatus(gg){
     if(statusSwitch){
       const g = gg ?? bot.shards.reduce((a, b) => a + b.guilds, 0);
-      for(let i = 0; i < bot.shards.length; i ++){
-        if(bot.shards[i].ws.readyState != 1) continue;
-        bot.setStatus({
-          "status": "online",
-          "since": 0,
-          "afk": false,
-          "activities": [{
-            "name": g + " guild" + (g == 1 ? "" : "s"),
-            "type": consts.activity_types.Competing
-          }]
-        }, i);
-      }
+      bot.setStatus({
+        "status": "online",
+        "since": 0,
+        "afk": false,
+        "activities": [{
+          "name": g + " guild" + (g == 1 ? "" : "s"),
+          "type": consts.activity_types.Competing
+        }]
+      });
     } else {
       const c = await cocs.size();
-      for(let i = 0; i < bot.shards.length; i ++){
-        if(bot.shards[i].ws.readyState != 1) continue;
-        bot.setStatus({
-          "status": "online",
-          "since": 0,
-          "afk": false,
-          "activities": [{
-            "name": c + " clash" + (c == 1 ? "" : "es"),
-            "type": consts.activity_types.Watching
-          }]
-        }, i);
-      }
+      bot.setStatus({
+        "status": "online",
+        "since": 0,
+        "afk": false,
+        "activities": [{
+          "name": c + " clash" + (c == 1 ? "" : "es"),
+          "type": consts.activity_types.Watching
+        }]
+      });
     }
     statusSwitch = !statusSwitch;
   }
 
-  const shards = new Set();
+  let rg = 0;
   bot.events["READY"] = async data => {
-    const [a, b] = data.shard;
     console.log("[Shard #" + a + "] got ready!");
-    shards.add(a);
+    rg += data.guilds.length;
 
-    if(shards.size == b){
+    if(bot.ready()){
       console.log("Bot logged in as", botUser.username);
-      const guilds = data.guilds.length;
-      setStatus(guilds);
+      setStatus(rg);
       delete bot.events["READY"];
     }
   };
