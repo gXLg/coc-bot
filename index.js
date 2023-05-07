@@ -81,7 +81,7 @@
 
   let rg = 0;
   bot.events["READY"] = async data => {
-    console.log("[Shard #" + a + "] got ready!");
+    console.log("[Shard #" + data.shard[0] + "] got ready!");
     rg += data.guilds.length;
 
     if(bot.ready()){
