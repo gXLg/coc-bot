@@ -78,7 +78,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
 
   if(!top3.length){
     embed.description = resEm(0) + "No times could be found!";
-    await bot.slash.post(data.id, data.token, message);
+    await bot.interactions.patch(data.token, message);
     return;
   }
 
