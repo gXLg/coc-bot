@@ -38,8 +38,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
 
     available =
       "from <t:" + parseInt(s.valueOf() / 1000) + ":t>" +
-      " to <t:" + parseInt(e.valueOf() / 1000) + ":t>" +
-      "\nTimezone: " + entry.timezone;
+      " to <t:" + parseInt(e.valueOf() / 1000) + ":t>";
   }
 
   embed.description = [
