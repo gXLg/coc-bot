@@ -30,8 +30,8 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
   while(true){
     const ms = await bot.members.list(data.guild_id, 1000, max);
     if(!ms.length) break;
-    const is = ms.map(m => m.user.id);
-    max = Math.max(...is);
+    const is = ms.map(m => m.user.id).sort();
+    max = is.slice(-1)[0];
     ids.push(...is);
   }
   const ava = { };
@@ -63,7 +63,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
       score += there.length;
     }
     if(people.size)
-      scores.push({ "w": weight * score, "p": people, i });
+      scores.push({ "w": weight + score ** 2, "p": people, i });
   }
   scores.sort((a, b) => b.w - a.w);
   const close = (a, b) => Math.abs(a.i - b.i) < h / 2;
