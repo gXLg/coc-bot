@@ -54,7 +54,7 @@
   let statusSwitch = true;
   async function setStatus(gg){
     if(statusSwitch){
-      const g = gg ?? bot.shards.reduce((a, b) => a + b.guilds, 0);
+      const g = gg ?? bot.shards.reduce((a, b) => a + b.guilds.size, 0);
       bot.setStatus({
         "status": "online",
         "since": 0,
