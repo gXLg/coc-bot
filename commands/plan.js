@@ -48,7 +48,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
       i = (i + 1) % (24 * 60);
     }
   }
-  const now = parseInt(Date.now() / 1000);
+  const now = parseInt(Date.now() / 1000 + 60);
   const current = parseInt(now / 60) % (24 * 60);
   const scores = [];
   for(let i = 0; i < 24 * 60; i ++){
