@@ -118,7 +118,9 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
         await bot.memberRoles.del(
           data.guild_id, user, thisGuild.playing_role
         );
-        delete cache[user];
+        cache[user].roles = cache[user].roles.filter(
+          r => r != thisGuild.playing_role
+        );
       }
     }
     const part = players.map(p =>
