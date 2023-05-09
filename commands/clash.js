@@ -103,9 +103,12 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
           mem.roles &&
           thisGuild.playing_role &&
           !mem.roles.includes(thisGuild.playing_role)
-        ) await bot.memberRoles.put(
-          data.guild_id, user, thisGuild.playing_role
-        );
+        ){
+          await bot.memberRoles.put(
+            data.guild_id, user, thisGuild.playing_role
+          );
+          cache[user].roles.push(thisGuild.playing_role);
+        }
         pl.push(user);
       }
       players.push(pl);
@@ -152,6 +155,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
       const winner = players.find(
         p => p[3] && cache[p[3]]?.roles
       )?.[3];
+
       if(winner && thisGuild.winner_role){
         await bot.memberRoles.put(
           data.guild_id, winner, thisGuild.winner_role
