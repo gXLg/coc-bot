@@ -1,7 +1,7 @@
 const resEm = require("../utils/response-emoji.js");
 const axios = require("axios");
 
-module.exports = async (bot, data, servers, cocs, users, handles) => {
+module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
 
   const embed = { "description": null, "color": 0x7CF2EE };
   const message = {
@@ -74,6 +74,11 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
     await servers.put(data.guild_id, { "winners": thisGuild.winners });
   }
 
+  const modes = clash.modes.map(m => m.slice(0, 1).toUpperCase() +
+    clash.mode.slice(1).toLowerCase()).join(", ");
+  const langs = clash.programmingLanguages.length ?
+    clash.programmingLanguages.join(", ") : "any";
+
   while(true){
 
     const res = await axios.post(
@@ -91,7 +96,19 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
       const nick = p.codingamerNickname;
       const phandle = p.codingamerHandle;
       const user = await handles.get(phandle, "user");
-      const pl = [nick, phandle, p.rank];
+      const det = [p.rank];
+      if(clash.finished){
+        const t = parseInt(p.duration / 1000);
+        const m = parseInt(t / 60);
+        const s = ((t % 60) + "").padStart(2, 0);
+        const d = [p.score + "%"]
+        if(modes.includes("Fastest") || modes.includes("Reverse"))
+          d.push(m + ":" + s);
+        if(modes.includes("Shortest"))
+          d.push(p.criterion + " chars");
+        det.push(d.join("/"));
+      }
+      const pl = [nick, phandle, det];
       if(user){
         role.delete(user);
         playing.add(user);
@@ -124,9 +141,10 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
       }
     }
     const part = players.map(p =>
-      (clash.finished ? p[2] + ". " : "") +
+      (clash.finished ? p[2][0] + ". " : "") +
       "[" + p[0] + "](https://www.codingame.com/profile" +
-        p[1] + ")" + (p[3] ? "(<@" + p[3] + ">)" : "")
+      p[1] + ")" + (p[3] ? " (<@" + p[3] + ">)" : "") +
+      (clash.finished ? " " + p[2][1] : "")
     );
 
     let invite;
@@ -137,6 +155,8 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
         "clashofcode/clash/" + handle + ") to participate, " +
         "the Clash will start <t:" +
         parseInt(clash.startTimestamp / 1000) + ":R>.\n\n" +
+        "Modes: " + modes + "\n" +
+        "Languages: " + langs + "\n\n" +
         "In the lobby: " + part.join(", ");
     } else if(clash.started && !clash.finished){
       invite = "A Clash of Code is running" +
@@ -147,6 +167,8 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
         parseInt(clash.startTimestamp / 1000) + ":R>.\n" +
         "The Clash will finish <t:" +
         parseInt((Date.now() + clash.msBeforeEnd) / 1000) + ":R>.\n\n" +
+        "Modes: " + modes + "\n" +
+        "Languages: " + langs + "\n\n" +
         "Currently playing: " + part.join(", ");
     } else if(!clash.started && clash.finished){
       invite = "The Clash" + (
@@ -176,12 +198,15 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
       invite = "The Clash of Code" +
         (public ? " on the server '" + server + "'" : "") +
         " has finished! Good game everybody!\n\n" +
-        "Click [here](https://www.codingame.com/" +
+        "The Clash finished <t:" +
+        parseInt((Date.now() + clash.msBeforeEnd) / 1000) + ":R>, " +
+        "click [here](https://www.codingame.com/" +
         "clashofcode/clash/report/" + handle + ") to see the " +
-        "results, the Clash finished <t:" +
-        parseInt((Date.now() + clash.msBeforeEnd) / 1000) + ":R>.\n\n" +
+        "results.\n\n" +
+        "Modes: " + modes + "\n" +
+        "Languages: " + langs + "\n\n" +
         (winner ? "Game winner: <@" + winner + ">, congrats!\n\n" : "") +
-        "Leaderboard:\n" + part.join("\n");
+        resEm(1) + "Leaderboard:\n" + part.join("\n");
 
     }
 
@@ -195,9 +220,10 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
 
       embed.description = invite;
 
-      if(gid in sent)
-        await bot.messages.patch(guild.send_channel, sent[gid], message);
-      else {
+      if(gid in sent){
+        const m = await bot.messages.patch(guild.send_channel, sent[gid], message);
+        if(m.code) delete sent[gid];
+      } else {
         const m = await bot.messages.post(guild.send_channel, message);
         if(m.id) sent[gid] = m.id;
       }

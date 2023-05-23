@@ -1,6 +1,6 @@
 const resEm = require("../utils/response-emoji.js");
 
-module.exports = async (bot, data, servers, cocs, users, handles) => {
+module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
 
   const embed = { "description": null, "color": 0x7CF2EE };
   const message = { "embeds": [embed], "flags": 64 };
@@ -17,6 +17,12 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
   if(h > 5 * 60){
     embed.description = resEm(0) + "A party can't be longer " +
       "than 5 hours!";
+    await bot.slash.post(data.id, data.token, message);
+    return;
+  }
+  if(h < 30){
+    embed.description = resEm(0) + "A party can't be shorter " +
+      "than half an hour!";
     await bot.slash.post(data.id, data.token, message);
     return;
   }
@@ -66,7 +72,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
       scores.push({ "w": weight + score ** 2, "p": people, i });
   }
   scores.sort((a, b) => b.w - a.w);
-  const close = (a, b) => Math.abs(a.i - b.i) < h / 2;
+  const close = (a, b) => Math.abs(a.i - b.i) < h;
   const top3 = scores.filter((s, i) => {
     if(scores.filter(c => close(s, c)).length == 1) return true;
     return Math.max(

@@ -4,10 +4,20 @@ const fs = require("fs");
 const rememberMe = fs.readFileSync(".rememberMe", "utf-8").trim();
 const ownerId = fs.readFileSync(".userId", "utf-8").trim();
 
-module.exports = async (bot, data, servers, cocs, users, handles) => {
+module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
 
   const embed = { "description": null, "color": 0x7CF2EE };
   const message = { "embeds": [embed], "flags": 64 };
+
+  if(loggen.lock){
+    embed.description = resEm(0) + "The service is currently " +
+      "used by someone else, please wait 1-5 minutes and try " +
+      "again later."
+    await bot.slash.post(data.id, data.token, message);
+    return;
+  }
+
+  loggen.lock = true;
 
   const res = await axios.post(
     "https://www.codingame.com/services/" +
@@ -19,7 +29,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
   );
   const clash = res.data;
 
-  embed.description = "Private Clash created! Click " +
+  embed.description = resEm(1) + "Private Clash created! Click " +
     "[join](https://www.codingame.com/clashofcode/clash/" +
     clash.publicHandle + ") to connect your account, " +
     "the Clash will expire <t:" +
@@ -53,6 +63,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
         player.codingamerNickname + "](https://www.codingame.com/" +
         "profile/" + handle + ")! Be welcome and enjoy the Clashes!";
       await bot.interactions.patch(data.token, message);
+      loggen.lock = false;
       break;
     }
     if(res.data.finished || clash.startTimestamp < Date.now()){
@@ -69,6 +80,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
       embed.description = resEm(0) + "It seems, " +
         "the Clash timed out. Please try again!";
       await bot.interactions.patch(data.token, message);
+      loggen.lock = false;
       break;
     }
   }

@@ -50,6 +50,7 @@
     database + "handles.json",
     ["user"]
   );
+  const loggen = { "lock": false };
 
   let statusSwitch = true;
   async function setStatus(gg){
@@ -100,7 +101,7 @@
     try {
       const name = data.data.name;
       const run = require_("./commands/" + name + ".js");
-      await run(bot, data, servers, cocs, users, handles);
+      await run(bot, data, servers, cocs, users, handles, loggen);
     } catch(error){
       const message = {
         "embeds": [{ "description": "Internal error occured:\n" + error }],
