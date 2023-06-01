@@ -75,7 +75,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
   }
 
   const modes = clash.modes.map(m => m.slice(0, 1).toUpperCase() +
-    clash.mode.slice(1).toLowerCase()).join(", ");
+    m.slice(1).toLowerCase()).join(", ");
   const langs = clash.programmingLanguages.length ?
     clash.programmingLanguages.join(", ") : "any";
 
