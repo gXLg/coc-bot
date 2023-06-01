@@ -66,7 +66,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
       const t = thisGuild.winners[w];
       if(parseInt(Date.now() / 60000) - t > thisGuild.winner_time){
         await bot.memberRoles.del(
-          data.guild_id, w, thisGuild.playing_winner_role
+          data.guild_id, w, thisGuild.winner_role
         );
         delete thisGuild.winners[w];
       }
