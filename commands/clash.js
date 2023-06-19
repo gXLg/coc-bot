@@ -88,6 +88,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     );
     const clash = res.data;
 
+    let all = true;
     const players = [];
     const role = new Set([...playing]);
     if(clash.finished)
@@ -101,11 +102,14 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
         const t = parseInt(p.duration / 1000);
         const m = parseInt(t / 60);
         const s = ((t % 60) + "").padStart(2, 0);
-        const d = [p.score + "%"]
-        if(modes.includes("Fastest") || modes.includes("Reverse"))
-          d.push(m + ":" + s);
-        if(modes.includes("Shortest"))
-          d.push(p.criterion + " chars");
+        const d = [p.score == null ? "waiting..." : p.score + "%"];
+        if(p.score == null) all = false;
+        else {
+          if(modes.includes("Fastest") || modes.includes("Reverse"))
+            d.push(m + ":" + s);
+          if(modes.includes("Shortest"))
+            d.push(p.criterion + " chars");
+        }
         det.push(d.join("/"));
       }
       const pl = [nick, phandle, det];
@@ -176,24 +180,26 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
       ) + " was aborted!";
     } else {
 
-      const winner = players.find(
-        p => p[3] && cache[p[3]]?.roles
-      )?.[3];
+      if(all){
+        const winner = players.find(
+          p => p[3] && cache[p[3]]?.roles
+        )?.[3];
 
-      if(winner && thisGuild.winner_role){
-        await bot.memberRoles.put(
-          data.guild_id, winner, thisGuild.winner_role
-        );
-        await servers.perform(data.guild_id, entry =>
-          entry.winners[winner] = parseInt(Date.now() / 60000)
-        );
-        await users.perform(winner, entry => entry.won_games ++);
+        if(winner && thisGuild.winner_role){
+          await bot.memberRoles.put(
+            data.guild_id, winner, thisGuild.winner_role
+          );
+          await servers.perform(data.guild_id, entry =>
+            entry.winners[winner] = parseInt(Date.now() / 60000)
+          );
+          await users.perform(winner, entry => entry.won_games ++);
+        }
+        for(const p of players){
+          if(p[3])
+            await users.perform(p[3], entry => entry.played_games ++);
+        }
+        await cocs.add(handle);
       }
-      for(const p of players){
-        if(p[3])
-          await users.perform(p[3], entry => entry.played_games ++);
-      }
-      await cocs.add(handle);
 
       invite = "The Clash of Code" +
         (public ? " on the server '" + server + "'" : "") +
@@ -229,7 +235,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
       }
     }
 
-    if(clash.finished) break;
+    if(clash.finished && all) break;
     await new Promise(r => setTimeout(r, 5000));
   }
 };
