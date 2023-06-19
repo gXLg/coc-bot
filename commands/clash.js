@@ -180,8 +180,11 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
       ) + " was aborted!";
     } else {
 
+      let winner;
+
       if(all){
-        const winner = players.find(
+
+        winner = players.find(
           p => p[3] && cache[p[3]]?.roles
         )?.[3];
 
