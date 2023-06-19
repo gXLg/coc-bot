@@ -46,6 +46,9 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
 
   embed.description = "Hosting the event...";
   await bot.slash.post(data.id, data.token, message);
+  embed.description = "An event is being hosted in <#" + sendChannel +
+    ">, make sure to join in!";
+  await bot.messages.post(data.channel.id, message);
 
   let server;
   if(public){
