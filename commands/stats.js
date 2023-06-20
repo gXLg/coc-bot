@@ -12,7 +12,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     o => o.name == "user"
   )?.value ?? userId;
 
-  const entry = await users.getEntry(user);
+  const entry = await users[user](e => e);
 
   let pseudo;
   if(entry.handle){

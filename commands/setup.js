@@ -85,21 +85,21 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     }
     const time = parseInt(m[1]) * 60 + parseInt(m[2]);
     updated = true;
-    await servers.put(data.guild_id, { "winner_time": time });
+    await servers[data.guild_id](e => { e.winner_time = time; });
   }
 
   if(send_channel)
-    await servers.put(data.guild_id, { send_channel });
+    await servers[data.guild_id](e => { e.send_channel = send_channel; });
   if(playing_role)
-    await servers.put(data.guild_id, { playing_role });
+    await servers[data.guild_id](e => { e.playing_role = playing_role; });
   if(ping_role){
     updated = true;
-    await servers.put(data.guild_id, { ping_role });
+    await servers[data.guild_id](e => { e.ping_role = ping_role; });
   }
   if(winner_role)
-    await servers.put(data.guild_id, { winner_role });
+    await servers[data.guild_id](e => { e.winner_role = winner_role; });
 
-  const entry = await servers.getEntry(data.guild_id);
+  const entry = await servers[data.guild_id](e => e);
   let c;
   const time = [];
   if(c = parseInt(entry.winner_time / 60))

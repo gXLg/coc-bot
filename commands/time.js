@@ -45,9 +45,9 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
   const start = (s + 24 * 60 - off) % (24 * 60);
   const end = (e + 24 * 60 - off) % (24 * 60);
 
-  await users.put(userId, {
-    "available": [start, end],
-    "timezone": tz
+  await users[userId](e => {
+    e.available = [start, end];
+    e.timezone = tz;
   });
 
   embed.description = resEm(1) + "Successfully set " +

@@ -20,7 +20,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     return;
   }
 
-  const thisGuild = await servers.getEntry(data.guild_id);
+  const thisGuild = await servers[data.guild_id](e => e);
   const sendChannel = thisGuild.send_channel;
   if(!sendChannel){
     embed.description = resEm(0) + "No send channel is set up " +
@@ -74,7 +74,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
         delete thisGuild.winners[w];
       }
     }
-    await servers.put(data.guild_id, { "winners": thisGuild.winners });
+    await servers[data.guild_id](e => { e.winners = thisGuild.winners; });
   }
 
   const modes = clash.modes.map(m => m.slice(0, 1).toUpperCase() +
@@ -99,7 +99,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     for(const p of clash.players){
       const nick = p.codingamerNickname;
       const phandle = p.codingamerHandle;
-      const user = await handles.get(phandle, "user");
+      const user = await handles[phandle](e => e.user);
       const det = [p.rank];
       if(clash.finished){
         const t = parseInt(p.duration / 1000);
@@ -195,14 +195,14 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
           await bot.memberRoles.put(
             data.guild_id, winner, thisGuild.winner_role
           );
-          await servers.perform(data.guild_id, entry =>
-            entry.winners[winner] = parseInt(Date.now() / 60000)
-          );
-          await users.perform(winner, entry => entry.won_games ++);
+          await servers[data.guild_id](e => {
+            e.winners[winner] = parseInt(Date.now() / 60000);
+          });
+          await users[winner](e => e.won_games ++);
         }
         for(const p of players){
           if(p[3])
-            await users.perform(p[3], entry => entry.played_games ++);
+            await users[p[3]](e => e.played_games ++);
         }
         await cocs.add(handle);
       }
@@ -224,7 +224,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
 
     for(const gid of guilds){
 
-      const guild = await servers.getEntry(gid);
+      const guild = await servers[gid](e => e);
       if(!guild.send_channel) continue;
 
       const ping = guild.ping_role ? "<@&" + guild.ping_role + ">" : null;

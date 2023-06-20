@@ -56,8 +56,8 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
       );
       const user = data.user?.id ?? data.member.user.id;
       const handle = player.codingamerHandle;
-      await users.put(user, { handle });
-      await handles.put(handle, { user });
+      await users[user](e => { e.handle = handle; });
+      await handles[handle](e => { e.user = user; });
 
       embed.description = resEm(1) + "Logged in as [" +
         player.codingamerNickname + "](https://www.codingame.com/" +

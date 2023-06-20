@@ -42,7 +42,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
   }
   const ava = { };
   for(const id of ids){
-    const available = await users.get(id, "available");
+    const available = await users[id](e => e.available);
     if(available) ava[id] = available;
   }
   const times = [...Array(24 * 60)].map(i => []);
@@ -95,7 +95,8 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     if(pep.length > 50) pip.push("...");
     txt.push(
       (i + 1) + ". <t:" + (now + s.i * 60) + ":R> with " +
-      pep.length + " players: " + pip.join(", ")
+      pep.length + " player" + (pep.length == 1 ? "" : "s") +
+      ": " + pip.join(", ")
     );
   });
   embed.description = txt.join("\n");

@@ -120,9 +120,6 @@
       console.log("\rCtrl-C received, waiting for everything to stop...");
     clearInterval(status);
     await bot.destroy();
-    await Promise.all([
-      servers, cocs, users, handles
-    ].map(db => db.stop()));
     process.exit(0);
   });
 
