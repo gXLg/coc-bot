@@ -12,6 +12,8 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     o => o.name == "user"
   )?.value ?? userId;
 
+  await bot.slash.defer(data.id, data.token, { "flags": 64 }));
+
   const entry = await users[user](e => e);
 
   let pseudo;
@@ -55,6 +57,6 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     "Clashes won: " + entry.won_games,
     "Available time: " + available
   ].join("\n");
-  await bot.slash.post(data.id, data.token, message);
+  await bot.interactions.patch(data.token, message);
 
 };
