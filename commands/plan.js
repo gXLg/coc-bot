@@ -27,6 +27,10 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     return;
   }
 
+  const post = data.data.options.find(
+    o => o.name == "post")?.value ?? false;
+  if(post) delete message.flags;
+
   embed.description = "Fetching all the users... This may " +
     "take a while in large guilds.";
   await bot.slash.post(data.id, data.token, message);

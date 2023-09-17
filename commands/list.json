@@ -81,6 +81,11 @@
         "name": "time",
         "description": "Planned party game duration in <H>:<M> format",
         "required": true
+      },
+      {
+        "type": 5,
+        "name": "post",
+        "description": "Whether to post the plan message for discussing with other members, default: False"
       }
     ]
   },
