@@ -12,7 +12,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     o => o.name == "user"
   )?.value ?? userId;
 
-  await bot.slash.defer(data.id, data.token, { "flags": 64 }));
+  await bot.slash.defer(data.id, data.token, { "flags": 64 });
 
   const entry = await users[user](e => e);
 
