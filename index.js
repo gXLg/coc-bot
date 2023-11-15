@@ -5,8 +5,6 @@
     return require(mod);
   }
 
-  const DEBUG = true;
-
   const fs = require("fs");
 
   const database = "./database/";
@@ -21,9 +19,9 @@
   const token = fs.readFileSync(".token", "utf-8").trim();
   const { AsyncTable, AsyncSet } = require("gxlg-asyncdb");
 
-  const bot = new Bot(token, DEBUG);
-  await utils.updateCommands(bot, "./commands/list.json", DEBUG);
-  const botUser = await bot.user();
+  const bot = new Bot(token);
+  await utils.updateCommands(bot, "./commands/list.json");
+  const botUser = await bot.me.getUser();
 
   const servers = new AsyncTable(
     database + "servers.json",
@@ -82,11 +80,11 @@
 
   let rg = 0;
   bot.events["READY"] = async data => {
-    console.log("[Shard #" + data.shard[0] + "] got ready!");
+    bot.logger.emit("sinfo", data.shard[0], "Got ready!");
     rg += data.guilds.length;
 
     if(bot.ready()){
-      console.log("Bot logged in as", botUser.username);
+      bot.logger.emit("info", "Bot logged in as", botUser.username);
       setStatus(rg);
       delete bot.events["READY"];
     }
@@ -112,12 +110,8 @@
     }
   };
 
-  let ctrlC = false;
-  process.on("SIGINT", async () => {
-    if(ctrlC) return;
-    ctrlC = true;
-    if(DEBUG)
-      console.log("\rCtrl-C received, waiting for everything to stop...");
+  utils.sigint(async () => {
+    bot.logger.emit("info", "Ctrl-C received, waiting for everything to stop...");
     clearInterval(status);
     await bot.destroy();
     process.exit(0);

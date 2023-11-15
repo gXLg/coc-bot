@@ -149,7 +149,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     }
     const part = players.map(p =>
       (clash.finished ? p[2][0] + ". " : "") +
-      "[" + p[0] + "](https://www.codingame.com/profile" +
+      "[" + p[0] + "](https://www.codingame.com/profile/" +
       p[1] + ")" + (p[3] ? " (<@" + p[3] + ">)" : "") +
       (clash.finished ? " " + p[2][1] : "")
     );
