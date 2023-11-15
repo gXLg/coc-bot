@@ -38,7 +38,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
   const ids = [];
   let max;
   while(true){
-    const ms = await bot.members.list(data.guild_id, 1000, max);
+    const ms = await bot.members.list(data.guild_id, max, 1000);
     if(!ms.length) break;
     const is = ms.map(m => m.user.id).sort();
     max = is.slice(-1)[0];
