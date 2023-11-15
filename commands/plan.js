@@ -92,7 +92,8 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     return;
   }
 
-  const txt = [resEm(1) + "Best times to plan a party are:"];
+  const t = (m[0] ? m[0] + "h " : "") + (m[1] ? m[1] + "min" : "");
+  const txt = [resEm(1) + "Best times to plan a party for " + t + " are:"];
   top3.forEach((s, i) => {
     const pep = [...s.p];
     const pip = pep.map(p => "<@" + p + ">").slice(0, 50);
