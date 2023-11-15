@@ -74,7 +74,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
         people.add(id);
       score += there.length;
     }
-    if(people.size)
+    if(people.size > 1)
       scores.push({ "w": weight + score ** 2, "p": people, i });
   }
   scores.sort((a, b) => b.w - a.w);
