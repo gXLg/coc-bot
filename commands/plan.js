@@ -13,7 +13,9 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     await bot.slash.post(data.id, data.token, message);
     return;
   }
-  const h = parseInt(m[1]) * 60 + parseInt(m[2]);
+  const ho = parseInt(m[1]);
+  const mi = parseInt(m[2]);
+  const h = ho * 60 + mi;
   if(h > 5 * 60){
     embed.description = resEm(0) + "A party can't be longer " +
       "than 5 hours!";
@@ -92,7 +94,9 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     return;
   }
 
-  const t = (m[0] ? m[0] + "h " : "") + (m[1] ? m[1] + "min" : "");
+  const ho = parseInt(m[1]);
+  const mi = parseInt(m[2]);
+  const t = (ho ? ho + "h " : "") + (mi ? mi + "min" : "");
   const txt = [resEm(1) + "Best times to plan a party for " + t + " are:"];
   top3.forEach((s, i) => {
     const pep = [...s.p];
