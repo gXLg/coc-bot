@@ -94,8 +94,6 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     return;
   }
 
-  const ho = parseInt(m[1]);
-  const mi = parseInt(m[2]);
   const t = (ho ? ho + "h " : "") + (mi ? mi + "min" : "");
   const txt = [resEm(1) + "Best times to plan a party for " + t + " are:"];
   top3.forEach((s, i) => {
