@@ -97,12 +97,18 @@
   bot.events["INTERACTION_CREATE"] = async data => {
     if(data.type != 2) return;
     try {
+      bot.logger.emit("info", "Executing application command", name);
       const name = data.data.name;
       const run = require_("./commands/" + name + ".js");
       await run(bot, data, servers, cocs, users, handles, loggen);
     } catch(error){
+      bot.logger.emit("error", "Execution of", name, "failed");
+      bot.logger.emit("error", error);
       const message = {
-        "embeds": [{ "description": "Internal error occured:\n" + error }],
+        "embeds": [{
+          "description": "Internal error occured:\n" + error,
+          "color": 0xF23BA1
+        }],
         "flags": 64
       };
       const msg = await bot.slash.post(data.id, data.token, message);
