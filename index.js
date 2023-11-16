@@ -96,9 +96,9 @@
 
   bot.events["INTERACTION_CREATE"] = async data => {
     if(data.type != 2) return;
+    const name = data.data.name;
     try {
       bot.logger.emit("info", "Executing application command", name);
-      const name = data.data.name;
       const run = require_("./commands/" + name + ".js");
       await run(bot, data, servers, cocs, users, handles, loggen);
     } catch(error){
