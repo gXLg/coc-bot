@@ -80,7 +80,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
   const modes = clash.modes.map(m => m.slice(0, 1).toUpperCase() +
     m.slice(1).toLowerCase()).join(", ");
   const langs = clash.programmingLanguages.length ?
-    clash.programmingLanguages.join(", ") : "any";
+    clash.programmingLanguages.join(", ") : "All";
 
   while(true){
 
@@ -90,6 +90,10 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
       [handle]
     );
     const clash = res.data;
+    const mode = clash.mode ? (
+      clash.mode.slice(0, 1).toUpperCase() +
+      clash.mode.slice(1).toLowerCase()
+    ) : modes;
 
     let all = true;
     const players = [];
@@ -105,12 +109,14 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
         const t = parseInt(p.duration / 1000);
         const m = parseInt(t / 60);
         const s = ((t % 60) + "").padStart(2, 0);
-        const d = [p.score == null ? "waiting..." : p.score + "%"];
+        const d = [];
+        if(langs == "Any" && p.languageId)
+          d.push(p.languageId);
+        d.push(p.score == null ? "waiting..." : p.score + "%");
         if(p.score == null) all = false;
         else {
-          if(modes.includes("Fastest") || modes.includes("Reverse"))
-            d.push(m + ":" + s);
-          if(modes.includes("Shortest"))
+          d.push(m + ":" + s);
+          if(mode == "Shortest")
             d.push(p.criterion + " chars");
         }
         det.push(d.join("/"));
@@ -174,7 +180,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
         parseInt(clash.startTimestamp / 1000) + ":R>.\n" +
         "The Clash will finish <t:" +
         parseInt((Date.now() + clash.msBeforeEnd) / 1000) + ":R>.\n\n" +
-        "Modes: " + modes + "\n" +
+        "Mode: " + mode + "\n" +
         "Languages: " + langs + "\n\n" +
         "Currently playing: " + part.join(", ");
     } else if(!clash.started && clash.finished){
@@ -215,7 +221,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
         "click [here](https://www.codingame.com/" +
         "clashofcode/clash/report/" + handle + ") to see the " +
         "results.\n\n" +
-        "Modes: " + modes + "\n" +
+        "Mode: " + mode + "\n" +
         "Languages: " + langs + "\n\n" +
         (winner ? "Game winner: <@" + winner + ">, congrats!\n\n" : "") +
         resEm(1) + "Leaderboard:\n" + part.join("\n");
