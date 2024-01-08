@@ -31,16 +31,16 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
 
   const out = ["\n**Details**", "Exit code: " + code];
   if(stdout.length){
-    out.push("stdout:\n```ansi" + stdout + "```");
+    out.push("stdout:\n```ansi\n" + stdout + "```");
   }
   if(stderr.length){
-    out.push("stderr:\n```ansi" + stderr + "```");
+    out.push("stderr:\n```ansi\n" + stderr + "```");
   }
 
   await utils.updateCommands(bot, "./commands/list.json");
 
   embed.description = resEm(code == 0) + (
-    code == 0 ? "(test) Successfully reloaded!" : "An error occured!"
+    code == 0 ? "Successfully reloaded!" : "An error occured!"
   ) + out.join("\n");
   await bot.interactions.patch(data.token, message);
 
