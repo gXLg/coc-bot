@@ -29,7 +29,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     proc.on("close", res);
   });
 
-  const out = ["Exit code: " + code + "\n"];
+  const out = ["\nExit code: " + code + "\n"];
   if(stdout.length){
     out.push("stdout:\n```ansi\n" + stdout + "```");
   }
