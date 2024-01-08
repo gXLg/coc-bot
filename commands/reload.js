@@ -29,7 +29,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     proc.on("close", res);
   });
 
-  const out = ["\n**Details**", "Exit code: " + code + "\n"];
+  const out = ["Exit code: " + code + "\n"];
   if(stdout.length){
     out.push("stdout:\n```ansi\n" + stdout + "```");
   }
@@ -41,7 +41,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
 
   embed.description = resEm(code == 0) + (
     code == 0 ? "Successfully reloaded!" : "An error occured!"
-  ) + out.join("\n");
+  ) + out.join("");
   await bot.interactions.patch(data.token, message);
 
 };
