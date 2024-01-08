@@ -20,7 +20,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
 
   let stdout = "";
   let stderr = "";
-  const close = await new Promise(res => {
+  const code = await new Promise(res => {
     const proc = spawn("git", ["pull"]);
 
     proc.stdout.on("data", chunk => { stdout += chunk; });
@@ -40,7 +40,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
   await utils.updateCommands(bot, "./list.json");
 
   embed.description = resEm(code == 0) + (
-    code == 0 ? "Successfully reloaded!" : "An error occured!"
+    code == 0 ? "(test) Successfully reloaded!" : "An error occured!"
   ) + out.join("\n");
   await bot.interactions.patch(data.token, message);
 
