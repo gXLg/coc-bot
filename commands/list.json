@@ -99,5 +99,9 @@
         "description": "User"
       }
     ]
+  },
+  {
+    "name": "reload",
+    "description": "Reload bot commands, can only be run by the creator"
   }
 ]
