@@ -37,7 +37,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     out.push("stderr:\n```ansi" + stderr + "```");
   }
 
-  await utils.updateCommands(bot, "./list.json");
+  await utils.updateCommands(bot, "./commands/list.json");
 
   embed.description = resEm(code == 0) + (
     code == 0 ? "(test) Successfully reloaded!" : "An error occured!"
