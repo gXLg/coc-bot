@@ -32,24 +32,26 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
     return;
   }
 
+  await bot.slash.defer(data.id, data.token, { "flags": 64 });
+
   const clash = res.data;
   const clash = await codingame.getClash(m[1]);
 
   if(!clash || clash.finished){
     embed.description = resEm(0) + "This Clash does not exist " +
       "or it is already finished!";
-    await bot.slash.post(data.id, data.token, message);
+    await bot.interactions.patch(data.token, message);
     return;
   }
   const handle = clash.publicHandle;
   if (await cocs.has(handle)) {
     embed.description = resEm(0) + "This Clash is already recorded!";
-    await bot.slash.post(data.id, data.token, message);
+    await bot.interactions.patch(data.token, message);
     return;
   }
   await cocs.add(handle);
   embed.description = "Hosting the event...";
-  await bot.slash.post(data.id, data.token, message);
+  await bot.interactions.patch(data.token, message);
 
   await codingame.watchClash(
     bot, data, thisGuild, clash,
