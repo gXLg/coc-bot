@@ -33,6 +33,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     embed.description = resEm(0) + "Bot login data expired, " +
       "please contact the creator with a request to refresh the cookies!";
     await bot.interaction.patch(data.token, message);
+    loggen.lock = false;
     return;
   }
 
