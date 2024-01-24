@@ -1,4 +1,5 @@
 const axios = require("axios");
+const resEm = require("./response-emoji.js");
 
 async function watchClash(
   bot, data, thisGuild, clash,
