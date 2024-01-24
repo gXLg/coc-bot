@@ -43,9 +43,15 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     return;
   }
   const handle = clash.publicHandle;
-
+  if (await cocs.has(handle)) {
+    embed.description = resEm(0) + "This Clash is already recorded!";
+    await bot.slash.post(data.id, data.token, message);
+    return;
+  }
+  await cocs.add(handle);
   embed.description = "Hosting the event...";
   await bot.slash.post(data.id, data.token, message);
+
   embed.description = "An event is being hosted in <#" + sendChannel +
     ">, make sure to join in!";
   await bot.messages.post(data.channel.id, message);
@@ -144,7 +150,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
       players.push(pl);
     }
     if(thisGuild.playing_role){
-      for(const user of (clash.finished ? playing : role)){
+      for(const user of ((clash.finished && all) ? playing : role)){
         await bot.memberRoles.del(
           data.guild_id, user, thisGuild.playing_role
         );
@@ -187,6 +193,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
       invite = "The Clash" + (
         public ? " on the server '" + server + "'" : ""
       ) + " was aborted!";
+      await cocs.remove(handle);
     } else {
 
       let winner;
@@ -210,7 +217,6 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
           if(p[3])
             await users[p[3]](e => e.played_games ++);
         }
-        await cocs.add(handle);
       }
 
       invite = "The Clash of Code" +

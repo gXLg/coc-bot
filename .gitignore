@@ -131,6 +131,5 @@ dist
 
 # custom
 .token
-database/
 .rememberMe
 .userId

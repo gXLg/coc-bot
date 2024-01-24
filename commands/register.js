@@ -18,6 +18,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
   }
 
   loggen.lock = true;
+  await bot.slash.defer(data.id, data.token, { "flags": 64 });
 
   const res = await axios.post(
     "https://www.codingame.com/services/" +
@@ -28,13 +29,19 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
     }
   );
   const clash = res.data;
+  if (clash.id == 501) {
+    embed.description = resEm(0) + "Bot login data expired, " +
+      "please contact the creator with a request to refresh the cookies!";
+    await bot.interaction.patch(data.token, message);
+    return;
+  }
 
   embed.description = resEm(1) + "Private Clash created! Click " +
     "[join](https://www.codingame.com/clashofcode/clash/" +
     clash.publicHandle + ") to connect your account, " +
     "the Clash will expire <t:" +
     parseInt(clash.startTimestamp / 1000) + ":R>.";
-  await bot.slash.post(data.id, data.token, message);
+  await bot.interactions.patch(data.token, message);
 
   while(true){
     await new Promise(r => setTimeout(r, 5000));
