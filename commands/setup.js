@@ -1,6 +1,6 @@
 const resEm = require("../utils/response-emoji.js");
 
-module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
+module.exports = async (bot, data, servers) => {
 
   const embed = { "description": null, "color": 0x7CF2EE };
   const message = { "embeds": [embed], "flags": 64 };

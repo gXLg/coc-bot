@@ -18,6 +18,7 @@
   const { Bot, utils, consts } = require("nullcord");
   const token = fs.readFileSync(".token", "utf-8").trim();
   const { AsyncTable, AsyncSet } = require("gxlg-asyncdb");
+  const parameters = require("./utils/parameters.js");
 
   const bot = new Bot(token);
   await utils.updateCommands(bot, "./commands/list.json");
@@ -41,7 +42,8 @@
       ["played_games", 0],
       ["won_games", 0],
       "available",
-      "timezone"
+      "timezone",
+      "cookie"
     ]
   );
   const handles = new AsyncTable(
@@ -100,7 +102,8 @@
     try {
       bot.logger.emit("info", "Executing application command", name);
       const run = require_("./commands/" + name + ".js");
-      await run(bot, data, servers, cocs, users, handles, loggen);
+      const args = parameters(run).map(p => eval(p));
+      await run(...args);
     } catch(error){
       bot.logger.emit("error", "Execution of", name, "failed");
       bot.logger.emit("error", error);

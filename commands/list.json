@@ -103,5 +103,20 @@
   {
     "name": "reload",
     "description": "Reload bot commands, can only be run by the creator"
+  },
+  {
+    "name": "cookie",
+    "description": "Add your login cookie to the database",
+    "options": [
+      {
+        "type": 3,
+        "name": "value",
+        "description": "The rememberMe cookie"
+      }
+    ]
+  },
+  {
+    "name": "create",
+    "description": "Create a clash (WIP)"
   }
 ]

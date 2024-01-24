@@ -1,10 +1,11 @@
 const axios = require("axios");
 const resEm = require("../utils/response-emoji.js");
+const codingame = require("../utils/codingame.js");
 const fs = require("fs");
 const rememberMe = fs.readFileSync(".rememberMe", "utf-8").trim();
 const ownerId = fs.readFileSync(".userId", "utf-8").trim();
 
-module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
+module.exports = async (bot, data, users, handles, loggen) => {
 
   const embed = { "description": null, "color": 0x7CF2EE };
   const message = { "embeds": [embed], "flags": 64 };
@@ -20,15 +21,7 @@ module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
   loggen.lock = true;
   await bot.slash.defer(data.id, data.token, { "flags": 64 });
 
-  const res = await axios.post(
-    "https://www.codingame.com/services/" +
-    "ClashOfCode/createPrivateClash",
-    [ownerId, ["Javascript"], ["FASTEST"]],
-    {
-      "headers": { "Cookie": "rememberMe=" + rememberMe }
-    }
-  );
-  const clash = res.data;
+  const clash = await codingame.createClash(ownerId, rememberMe, ["Javascript"], ["FASTEST"]);
   if (clash.id == 501) {
     embed.description = resEm(0) + "Bot login data expired, " +
       "please contact the creator with a request to refresh the cookies!";

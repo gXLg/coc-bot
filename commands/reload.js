@@ -2,7 +2,7 @@ const resEm = require("../utils/response-emoji.js");
 const { spawn } = require("child_process");
 const { utils } = require("nullcord");
 
-module.exports = async (bot, data, servers, cocs, users, handles, loggen) => {
+module.exports = async (bot, data) => {
 
   const embed = { "description": null, "color": 0x7CF2EE };
   const message = { "embeds": [embed], "flags": 64 };
