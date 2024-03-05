@@ -1,4 +1,3 @@
-const axios = require("axios");
 const resEm = require("../utils/response-emoji.js");
 const codingame = require("../utils/codingame.js");
 

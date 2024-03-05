@@ -1,4 +1,3 @@
-const axios = require("axios");
 const resEm = require("../utils/response-emoji.js");
 const codingame = require("../utils/codingame.js");
 const fs = require("fs");
@@ -39,21 +38,14 @@ module.exports = async (bot, data, users, handles, loggen) => {
 
   while(true){
     await new Promise(r => setTimeout(r, 5000));
-    const res = await axios.post(
-      "https://www.codingame.com/services/" +
-      "ClashOfCode/findClashByHandle",
-      [clash.publicHandle]
+    const res = await codingame.getClash(
+      clash.publicHandle
     );
     const players = res.data.players;
     if(players.length > 1){
       const player = players.find(p => p.codingamerId != ownerId);
-      const res = await axios.post(
-        "https://www.codingame.com/services/" +
-        "ClashOfCode/leaveClashByHandle",
-        [ownerId, clash.publicHandle],
-        {
-          "headers": { "Cookie": "rememberMe=" + rememberMe }
-        }
+      await codingame.leaveClash(
+        clash.publicHandle, ownerId, rememberMe
       );
       const user = data.user?.id ?? data.member.user.id;
       const handle = player.codingamerHandle;
@@ -69,13 +61,8 @@ module.exports = async (bot, data, users, handles, loggen) => {
     }
     if(res.data.finished || clash.startTimestamp < Date.now()){
       if(clash.startTimestamp < Date.now()){
-        const res = await axios.post(
-          "https://www.codingame.com/services/" +
-          "ClashOfCode/leaveClashByHandle",
-          [ownerId, clash.publicHandle],
-          {
-            "headers": { "Cookie": "rememberMe=" + rememberMe }
-          }
+        await codingame.leaveClash(
+          clash.publicHandle, ownerId, rememberMe
         );
       }
       embed.description = resEm(0) + "It seems, " +

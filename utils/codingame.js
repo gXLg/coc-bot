@@ -211,33 +211,69 @@ async function watchClash(
 }
 
 async function createClash(ownerId, rememberMe, langs, modes) {
-  const res = await axios.post(
-    "https://www.codingame.com/services/" +
-    "ClashOfCode/createPrivateClash",
-    [ownerId, langs, modes],
-    {
-      "headers": { "Cookie": "rememberMe=" + rememberMe }
-    }
-  );
+  let res;
+  while (true) {
+    try {
+      res = await axios.post(
+        "https://www.codingame.com/services/" +
+        "ClashOfCode/createPrivateClash",
+        [ownerId, langs, modes],
+        {
+          "headers": { "Cookie": "rememberMe=" + rememberMe }
+        }
+      );
+      break;
+    } catch { }
+  }
   return res.data;
 }
 
 async function getUser(handle) {
-  const res = await axios.post(
-    "https://www.codingame.com/services/" +
-    "CodinGamer/findCodingamePointsStatsByHandle",
-    [handle]
-  );
+  let res;
+  while (true) {
+    try {
+      res = await axios.post(
+        "https://www.codingame.com/services/" +
+        "CodinGamer/findCodingamePointsStatsByHandle",
+        [handle]
+      );
+      break;
+    } catch { }
+  }
+  return res.data;
+}
+
+async function leaveClash(handle, ownerId, rememberMe) {
+  let res;
+  while (true) {
+    try {
+      res = await axios.post(
+        "https://www.codingame.com/services/" +
+        "ClashOfCode/leaveClashByHandle",
+        [ownerId, handle],
+        {
+          "headers": { "Cookie": "rememberMe=" + rememberMe }
+        }
+      );
+      break;
+    } catch { }
+  }
   return res.data;
 }
 
 async function getClash(handle) {
-  const res = await axios.post(
-    "https://www.codingame.com/services/" +
-    "ClashOfCode/findClashByHandle",
-    [handle]
-  );
+  let res;
+  while (true) {
+    try {
+      res = await axios.post(
+        "https://www.codingame.com/services/" +
+        "ClashOfCode/findClashByHandle",
+        [handle]
+      );
+      break;
+    } catch { }
+  }
   return res.data;
 }
 
-module.exports = { watchClash, createClash, getUser, getClash };
+module.exports = { watchClash, createClash, getUser, getClash, leaveClash };
