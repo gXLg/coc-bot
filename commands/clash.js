@@ -34,7 +34,6 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
 
   await bot.slash.defer(data.id, data.token, { "flags": 64 });
 
-  const clash = res.data;
   const clash = await codingame.getClash(m[1]);
 
   if(!clash || clash.finished){
