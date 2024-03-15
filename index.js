@@ -18,11 +18,12 @@
   const { Bot, utils, consts } = require("nullcord");
   const token = fs.readFileSync(".token", "utf-8").trim();
   const { AsyncTable, AsyncSet } = require("gxlg-asyncdb");
+  const { sigint } = require("gxlg-utils");
   const parameters = require("./utils/parameters.js");
 
   const bot = new Bot(token);
   await utils.updateCommands(bot, "./commands/list.json");
-  const botUser = await bot.me.getUser();
+  const botUser = await bot.self.getUser();
 
   const servers = new AsyncTable(
     database + "servers.json",
@@ -82,11 +83,11 @@
 
   let rg = 0;
   bot.events["READY"] = async data => {
-    bot.logger.emit("sinfo", data.shard[0], "Got ready!");
+    bot.logger.sinfo(data.shard[0], "Got ready!");
     rg += data.guilds.length;
 
     if(bot.ready()){
-      bot.logger.emit("info", "Bot logged in as", botUser.username);
+      bot.logger.info("Bot logged in as", botUser.username);
       setStatus(rg);
       delete bot.events["READY"];
     }
@@ -100,13 +101,13 @@
     if(data.type != 2) return;
     const name = data.data.name;
     try {
-      bot.logger.emit("info", "Executing application command", name);
+      bot.logger.info("Executing application command", name);
       const run = require_("./commands/" + name + ".js");
       const args = parameters(run).map(p => eval(p));
       await run(...args);
     } catch(error){
-      bot.logger.emit("error", "Execution of", name, "failed");
-      bot.logger.emit("error", error);
+      bot.logger.error("Execution of", name, "failed");
+      bot.logger.error(error);
       const message = {
         "embeds": [{
           "description": "Internal error occured:\n" + error,
@@ -119,8 +120,8 @@
     }
   };
 
-  utils.sigint(async () => {
-    bot.logger.emit("info", "Ctrl-C received, waiting for everything to stop...");
+  sigint(async () => {
+    bot.logger.info("Ctrl-C received, waiting for everything to stop...");
     clearInterval(status);
     await bot.destroy();
     process.exit(0);

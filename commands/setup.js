@@ -41,7 +41,7 @@ module.exports = async (bot, data, servers) => {
     roles.p = list[playing_role];
     roles.w = list[winner_role];
 
-    const user = await bot.me.getUser();
+    const user = await bot.self.getUser();
     const self = await bot.members.get(data.guild_id, user.id);
     roles.s = Math.max(...self.roles.map(r => list[r]));
   }

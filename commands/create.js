@@ -124,7 +124,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
   let type = types;
   let public = "False";
   while(true) {
-    const res = await bot.listenOnce(
+    const res = await bot.waitForEvent(
       "INTERACTION_CREATE",
       d => d.type == 3 && d.message.interaction?.id == data.id,
       300000
