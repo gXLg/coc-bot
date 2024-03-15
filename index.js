@@ -21,7 +21,7 @@
   const { sigint } = require("gxlg-utils");
   const parameters = require("./utils/parameters.js");
 
-  const bot = new Bot(token);
+  const bot = new Bot(token, { "internal": true });
   await utils.updateCommands(bot, "./commands/list.json");
   const botUser = await bot.self.getUser();
 
