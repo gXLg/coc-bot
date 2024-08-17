@@ -38,10 +38,10 @@ module.exports = async (bot, data, users, handles, loggen) => {
 
   while(true){
     await new Promise(r => setTimeout(r, 5000));
-    const res = await codingame.getClash(
+    const data = await codingame.getClash(
       clash.publicHandle
     );
-    const players = res.data.players;
+    const players = data.players;
     if(players.length > 1){
       const player = players.find(p => p.codingamerId != ownerId);
       await codingame.leaveClash(
@@ -59,7 +59,7 @@ module.exports = async (bot, data, users, handles, loggen) => {
       loggen.lock = false;
       break;
     }
-    if(res.data.finished || clash.startTimestamp < Date.now()){
+    if(data.finished || clash.startTimestamp < Date.now()){
       if(clash.startTimestamp < Date.now()){
         await codingame.leaveClash(
           clash.publicHandle, ownerId, rememberMe

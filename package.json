@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/gXLg/coc-bot#readme",
   "dependencies": {
+    "axios": "^1.7.4",
     "gxlg-asyncdb": "^1.5.5",
     "gxlg-utils": "^1.1.2",
     "nullcord": "^3.1.0"

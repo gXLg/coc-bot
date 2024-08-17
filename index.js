@@ -1,10 +1,4 @@
 (async () => {
-
-  function require_(mod){
-    delete require.cache[require.resolve(mod)];
-    return require(mod);
-  }
-
   const fs = require("fs");
 
   const database = "./database/";
@@ -102,7 +96,7 @@
     const name = data.data.name;
     try {
       bot.logger.info("Executing application command", name);
-      const run = require_("./commands/" + name + ".js");
+      const run = require("./commands/" + name + ".js");
       const args = parameters(run).map(p => eval(p));
       await run(...args);
     } catch(error){

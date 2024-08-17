@@ -20,7 +20,7 @@ module.exports = async (bot, data) => {
 
   let stdout = "";
   let stderr = "";
-  const code = await new Promise(res => {
+  let code = await new Promise(res => {
     const proc = spawn("git", ["pull"]);
 
     proc.stdout.on("data", chunk => { stdout += chunk; });
@@ -29,7 +29,30 @@ module.exports = async (bot, data) => {
     proc.on("close", res);
   });
 
-  const out = ["\nExit code: " + code + "\n"];
+  if (code) {
+    const out = ["\n`git` exit code: " + code + "\n"];
+    if(stdout.length){
+      out.push("stdout:\n```ansi\n" + stdout + "```");
+    }
+    if(stderr.length){
+      out.push("stderr:\n```ansi\n" + stderr + "```");
+    }
+
+    embed.description = resEm(0) + "An error occured!" + out.join("");
+    await bot.interactions.patch(data.token, message);
+    return;
+  }
+
+  let code = await new Promise(res => {
+    const proc = spawn("npm", ["install"]);
+
+    proc.stdout.on("data", chunk => { stdout += chunk; });
+    proc.stderr.on("data", chunk => { stderr += chunk; });
+
+    proc.on("close", res);
+  });
+
+  const out = ["\n`npm` exit code: " + code + "\n"];
   if(stdout.length){
     out.push("stdout:\n```ansi\n" + stdout + "```");
   }
@@ -37,11 +60,19 @@ module.exports = async (bot, data) => {
     out.push("stderr:\n```ansi\n" + stderr + "```");
   }
 
-  await utils.updateCommands(bot, "./commands/list.json");
+  if (code == 0) {
+    let m = 0;
+    for (const module in require.cache) {
+      delete require.cache[module];
+      m ++;
+    }
+    await utils.updateCommands(bot, "./commands/list.json");
 
-  embed.description = resEm(code == 0) + (
-    code == 0 ? "Successfully reloaded!" : "An error occured!"
-  ) + out.join("");
+    embed.description = resEm(1) + "Successfully reloaded!\n" +
+      "Purged cache: " + m + " modules" + out.join("");
+  } else {
+    embed.description = resEm(0) + "An error occured!" + out.join("");
+  }
   await bot.interactions.patch(data.token, message);
 
 };
