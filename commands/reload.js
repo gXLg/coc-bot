@@ -43,7 +43,7 @@ module.exports = async (bot, data) => {
     return;
   }
 
-  let code = await new Promise(res => {
+  code = await new Promise(res => {
     const proc = spawn("npm", ["install"]);
 
     proc.stdout.on("data", chunk => { stdout += chunk; });
