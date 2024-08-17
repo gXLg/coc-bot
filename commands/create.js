@@ -136,7 +136,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
       return;
     }
     if (res.data.custom_id == "create") {
-      const langs = [...sel1, ...sel2]
+      const langs = [...sel1, ...sel2];
       embed.description = resEm(1) + "Creating clash...\n" +
         "Mode: " + type.map(l => l[0] + l.slice(1).toLowerCase()).join(", ") + "\n" +
         "Languages: " + (langs.length ? langs.join(", ") : "All") + "\n" +
@@ -168,9 +168,9 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
     u.codingamer.userId, user.cookie, [...sel1, ...sel2], type
   );
   if (cc.id == 501) {
-    embed.description = resEm(0) + "Bot login data expired, " +
-      "please contact the creator with a request to refresh the cookies!";
-    await bot.interaction.patch(data.token, message);
+    embed.description = resEm(0) + "Your login data expired, " +
+      "please use `/cookie` again to set a new cookie!";
+    await bot.interactions.patch(data.token, message);
     loggen.lock = false;
     return;
   }

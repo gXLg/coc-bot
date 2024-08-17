@@ -16,7 +16,7 @@ module.exports = async (bot, data, users) => {
       "and verify the security for yourself.\n" +
       "To find your cookie, open Codingamer Website in your browser of choice, " +
       "open 'Developer Tools' and go to 'Storage'. From there " +
-      "navigate to 'Cookies' and copy the 'rememberMe' Value.";
+      "navigate to 'Cookies' and copy the 'rememberMe' value.";
     await bot.slash.post(data.id, data.token, message);
     return;
   }

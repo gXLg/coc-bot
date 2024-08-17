@@ -24,7 +24,7 @@ module.exports = async (bot, data, users, handles, loggen) => {
   if (clash.id == 501) {
     embed.description = resEm(0) + "Bot login data expired, " +
       "please contact the creator with a request to refresh the cookies!";
-    await bot.interaction.patch(data.token, message);
+    await bot.interactions.patch(data.token, message);
     loggen.lock = false;
     return;
   }

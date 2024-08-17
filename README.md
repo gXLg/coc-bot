@@ -13,7 +13,7 @@ in which they will most likely be able to play. Then you can
 plan a game by using the `/plan` command, and the bot will
 calculate the perfect time to play with most players.
 * Clash monitoring: When creating a clash, a real-life message
-will be posted, which will provide vasic information about
+will be posted, which will provide basic information about
 the clash and its' players.
 * Registration: you can connect your CodinGamer account with discord
 * Roles:

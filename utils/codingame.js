@@ -1,6 +1,9 @@
 const axios = require("axios");
 const resEm = require("./response-emoji.js");
 
+const api_error = new Error("Could not perform the API request");
+const MAX_RETRY = 5;
+
 async function watchClash(
   bot, data, thisGuild, clash,
   sendChannel, public, handle,
@@ -212,7 +215,8 @@ async function watchClash(
 
 async function createClash(ownerId, rememberMe, langs, modes) {
   let res;
-  while (true) {
+  let retry = MAX_RETRY;
+  while (retry--) {
     try {
       res = await axios.post(
         "https://www.codingame.com/services/" +
@@ -223,14 +227,21 @@ async function createClash(ownerId, rememberMe, langs, modes) {
         }
       );
       break;
-    } catch { }
+    } catch (error) {
+      if (error.response) {
+        res = error.response;
+        break;
+      }
+    }
   }
+  if (res == null) throw api_error;
   return res.data;
 }
 
 async function getUser(handle) {
   let res;
-  while (true) {
+  let retry = MAX_RETRY;
+  while (retry--) {
     try {
       res = await axios.post(
         "https://www.codingame.com/services/" +
@@ -238,14 +249,21 @@ async function getUser(handle) {
         [handle]
       );
       break;
-    } catch { }
+    } catch (error) {
+      if (error.response) {
+        res = error.response;
+        break;
+      }
+    }
   }
+  if (res == null) throw api_error;
   return res.data;
 }
 
 async function leaveClash(handle, ownerId, rememberMe) {
   let res;
-  while (true) {
+  let retry = MAX_RETRY;
+  while (retry--) {
     try {
       res = await axios.post(
         "https://www.codingame.com/services/" +
@@ -256,14 +274,21 @@ async function leaveClash(handle, ownerId, rememberMe) {
         }
       );
       break;
-    } catch { }
+    } catch (error) {
+      if (error.response) {
+        res = error.response;
+        break;
+      }
+    }
   }
+  if (res == null) throw api_error;
   return res.data;
 }
 
 async function getClash(handle) {
   let res;
-  while (true) {
+  let retry = MAX_RETRY;
+  while (retry--) {
     try {
       res = await axios.post(
         "https://www.codingame.com/services/" +
@@ -271,8 +296,14 @@ async function getClash(handle) {
         [handle]
       );
       break;
-    } catch { }
+    } catch (error) {
+      if (error.response) {
+        res = error.response;
+        break;
+      }
+    }
   }
+  if (res == null) throw api_error;
   return res.data;
 }
 
