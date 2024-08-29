@@ -47,7 +47,7 @@
   );
   const cocs = new BadSet(
     database + "cocs.badb",
-    { "maxLength": 50 }
+    { "maxLength": 40 }
   );
   const users = new BadTable(
     database + "users.badb",
@@ -55,12 +55,12 @@
       "key": "user_id",
       "values": [
         { "name": "user_id", "maxLength": 20 },
-        { "name": "handle", "maxLength": 50 },
+        { "name": "handle", "maxLength": 40 },
         { "name": "played_games", "type": "uint16" },
         { "name": "won_games", "type": "uint16" },
         { "name": "available_from", "type": "int16", "default": -1 },
         { "name": "available_to", "type": "int16", "default": -1 },
-        { "name": "cookie", "maxLength": 50 }
+        { "name": "cookie", "maxLength": 40 }
       ]
     }
   );
@@ -69,7 +69,7 @@
     {
       "key": "handle",
       "values": [
-        { "name": "handle", "maxLength": 50 },
+        { "name": "handle", "maxLength": 40 },
         { "name": "user_id", "maxLength": 20 }
       ]
     }
