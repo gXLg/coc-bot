@@ -1,6 +1,6 @@
 module.exports = (success) => {
   let emojis;
-  if(success){
+  if (success) {
     emojis = [
       "innocent",
       "point_up",

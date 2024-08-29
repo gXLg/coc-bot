@@ -8,7 +8,7 @@ module.exports = async (bot, data, users) => {
   const time = data.data.options.find(o => o.name == "time").value;
 
   const m = time.match(/^(\d+):(\d\d)$/);
-  if(!m){
+  if (!m) {
     embed.description = resEm(0) + "Wrong time format used!";
     await bot.slash.post(data.id, data.token, message);
     return;
@@ -16,13 +16,13 @@ module.exports = async (bot, data, users) => {
   const ho = parseInt(m[1]);
   const mi = parseInt(m[2]);
   const h = ho * 60 + mi;
-  if(h > 5 * 60){
+  if (h > 5 * 60) {
     embed.description = resEm(0) + "A party can't be longer " +
       "than 5 hours!";
     await bot.slash.post(data.id, data.token, message);
     return;
   }
-  if(h < 30){
+  if (h < 30) {
     embed.description = resEm(0) + "A party can't be shorter " +
       "than half an hour!";
     await bot.slash.post(data.id, data.token, message);
@@ -31,7 +31,7 @@ module.exports = async (bot, data, users) => {
 
   const post = data.data.options.find(
     o => o.name == "post")?.value ?? false;
-  if(post) delete message.flags;
+  if (post) delete message.flags;
 
   embed.description = "Fetching all the users... This may " +
     "take a while in large guilds.";
@@ -39,7 +39,7 @@ module.exports = async (bot, data, users) => {
 
   const ids = [];
   let max;
-  while(true){
+  while (true) {
     const ms = await bot.members.list(data.guild_id, { "after": max, "limit": 1000 });
     if(!ms.length) break;
     const is = ms.map(m => m.user.id).sort();
@@ -48,12 +48,13 @@ module.exports = async (bot, data, users) => {
   }
 
   const ava = { };
-  for(const id of ids){
-    const available = await users[id](e => e.available);
-    if(available) ava[id] = available;
+  for (const id of ids) {
+    const available = await users[id](e => [e.available_from, e.available_to]);
+    if(available[0] + available[1] != -2) ava[id] = available;
   }
+
   const times = [...Array(24 * 60)].map(i => []);
-  for(const id in ava){
+  for (const id in ava) {
     const [start, end] = ava[id];
     let i = start;
     while(i != end){
@@ -64,24 +65,24 @@ module.exports = async (bot, data, users) => {
   const now = parseInt(Date.now() / 1000 + 60);
   const current = parseInt(now / 60) % (24 * 60);
   const scores = [];
-  for(let i = 0; i < 24 * 60; i ++){
+  for (let i = 0; i < 24 * 60; i ++) {
     // the further away the time is, the smaller weight it gets
     const weight = 24 * 60 - i;
     const people = new Set();
     let score = 0;
-    for(let j = 0; j < h; j ++){
+    for (let j = 0; j < h; j ++) {
       const there = times[(current + i + j) % (24 * 60)];
-      for(const id of there)
+      for (const id of there)
         people.add(id);
       score += there.length;
     }
-    if(people.size > 1)
+    if (people.size > 1)
       scores.push({ "w": weight + score ** 2, "p": people, i });
   }
   scores.sort((a, b) => b.w - a.w);
   const close = (a, b) => Math.abs(a.i - b.i) < h;
   const top3 = scores.filter((s, i) => {
-    if(scores.filter(c => close(s, c)).length == 1) return true;
+    if (scores.filter(c => close(s, c)).length == 1) return true;
     return Math.max(
       ...(scores.filter(
         c => close(s, c)
@@ -89,7 +90,7 @@ module.exports = async (bot, data, users) => {
     ) == s.w;
   }).slice(0, 3);
 
-  if(!top3.length){
+  if (!top3.length) {
     embed.description = resEm(0) + "No times could be found!";
     await bot.interactions.patch(data.token, message);
     return;

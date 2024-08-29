@@ -17,14 +17,15 @@ module.exports = async (bot, data, users) => {
   const entry = await users[user](e => e);
 
   let pseudo;
-  if(entry.handle){
+  if (entry.handle) {
     const user = await codingame.getUser(entry.handle);
     if(user) pseudo = user.codingamer.pseudo;
   }
 
   let available = "Unset";
-  if(entry.available){
-    const [start, end] = entry.available;
+  if (entry.available_from + entry.available_to != -2) {
+    const start = entry.available_from;
+    const end = entry.available_to;
 
     const s = new Date();
     s.setUTCHours(parseInt(start / 60));

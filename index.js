@@ -2,8 +2,8 @@
   const fs = require("fs");
 
   const database = "./database/";
-  if(fs.existsSync(database)){
-    if(!fs.lstatSync(database).isDirectory()){
+  if (fs.existsSync(database)) {
+    if (!fs.lstatSync(database).isDirectory()) {
       console.log("The database path is not a directory!");
       return;
     }
@@ -11,7 +11,7 @@
 
   const { Bot, utils, consts } = require("nullcord");
   const token = fs.readFileSync(".token", "utf-8").trim();
-  const { AsyncTable, AsyncSet } = require("gxlg-asyncdb");
+  const { BadTable, BadSet } = require("badb");
   const { sigint } = require("gxlg-utils");
   const parameters = require("./utils/parameters.js");
 
@@ -19,37 +19,67 @@
   await utils.updateCommands(bot, "./commands/list.json");
   const botUser = await bot.self.getUser();
 
-  const servers = new AsyncTable(
-    database + "servers.json",
-    [
-      "send_channel",
-      "playing_role",
-      "ping_role",
-      "winner_role",
-      ["winner_time", 180],
-      ["winners", { }]
-    ]
+  const servers = new BadTable(
+    database + "servers.badb",
+    {
+      "key": "guild_id",
+      "values": [
+        { "name": "guild_id", "maxLength": 20 },
+        { "name": "send_channel", "maxLength": 20 },
+        { "name": "playing_role", "maxLength": 20 },
+        { "name": "ping_role", "maxLength": 20 },
+        { "name": "winner_role", "maxLength": 20 },
+        { "name": "winner_time", "type": "uint16", "default": 180 }
+        // -> own db for winners
+      ]
+    }
   );
-  const cocs = new AsyncSet("./database/cocs.json");
-  const users = new AsyncTable(
-    database + "users.json", [
-      "handle",
-      ["played_games", 0],
-      ["won_games", 0],
-      "available",
-      "timezone",
-      "cookie"
-    ]
+  const winners = new BadTable(
+    database + "winners.badb",
+    {
+      "key": "guild_id",
+      "values": [
+        { "name": "guild_id", "maxLength": 25 }, // + '@' + index
+        { "name": "user_id", "maxLength": 20 },
+        { "name": "timestamp", "maxLength": 7 } // base36
+      ]
+    }
   );
-  const handles = new AsyncTable(
-    database + "handles.json",
-    ["user"]
+  const cocs = new BadSet(
+    database + "cocs.badb",
+    { "maxLength": 50 }
+  );
+  const users = new BadTable(
+    database + "users.badb",
+    {
+      "key": "user_id",
+      "values": [
+        { "name": "user_id", "maxLength": 20 },
+        { "name": "handle", "maxLength": 50 },
+        { "name": "played_games", "type": "uint16" },
+        { "name": "won_games", "type": "uint16" },
+        { "name": "available_from", "type": "int16", "default": -1 },
+        { "name": "available_to", "type": "int16", "default": -1 },
+        { "name": "cookie", "maxLength": 50 }
+      ]
+    }
+  );
+  const handles = new BadTable(
+    database + "handles.badb",
+    {
+      "key": "handle",
+      "values": [
+        { "name": "handle", "maxLength": 50 },
+        { "name": "user_id", "maxLength": 20 }
+      ]
+    }
   );
   const loggen = { "lock": false };
 
+
   let statusSwitch = true;
-  async function setStatus(gg){
-    if(statusSwitch){
+  async function setStatus(gg) {
+    if (statusSwitch) {
       const g = gg ?? bot.guildsCount();
       bot.setStatus({
         "status": "online",
@@ -61,7 +91,7 @@
         }]
       });
     } else {
-      const c = await cocs.size();
+      const c = cocs.size();
       bot.setStatus({
         "status": "online",
         "since": 0,
@@ -76,20 +106,20 @@
   }
 
   let rg = 0;
+  let status;
   bot.events["READY"] = async data => {
     bot.logger.sinfo(data.shard[0], "Got ready!");
     rg += data.guilds.length;
 
-    if(bot.ready()){
+    if (bot.ready()) {
       bot.logger.info("Bot logged in as", botUser.username);
       setStatus(rg);
+      status = setInterval(() => {
+        setStatus();
+      }, 30 * 1000);
       delete bot.events["READY"];
     }
   };
-
-  const status = setInterval(() => {
-    setStatus();
-  }, 30 * 1000);
 
   bot.events["INTERACTION_CREATE"] = async data => {
     if(data.type != 2) return;
@@ -99,7 +129,7 @@
       const run = require("./commands/" + name + ".js");
       const args = parameters(run).map(p => eval(p));
       await run(...args);
-    } catch(error){
+    } catch (error) {
       bot.logger.error("Execution of", name, "failed");
       bot.logger.error(error);
       const message = {
@@ -110,13 +140,14 @@
         "flags": 64
       };
       const msg = await bot.slash.post(data.id, data.token, message);
-      if(msg.code) await bot.interactions.patch(data.token, message);
+      if (msg.code) await bot.interactions.patch(data.token, message);
     }
   };
 
   sigint(async () => {
     bot.logger.info("Ctrl-C received, waiting for everything to stop...");
     clearInterval(status);
+    [servers, winners, cocs, users, handles].forEach(db => db.close());
     await bot.destroy();
     process.exit(0);
   });

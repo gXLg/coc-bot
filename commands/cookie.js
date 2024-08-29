@@ -8,7 +8,7 @@ module.exports = async (bot, data, users) => {
   const userId = data.user?.id ?? data.member.user.id;
   const value = data.data.options?.find(o => o.name == "value").value;
 
-  if(!value) {
+  if (!value) {
     embed.description = "In order for the bot to create custom " +
       "Clashes, we kindly ask you to provide your login cookie 'rememberMe'. " +
       "This cookie will be stored in a database and will NOT be abused. " +
@@ -22,7 +22,7 @@ module.exports = async (bot, data, users) => {
   }
 
   const m = value.match(/[0-9A-Fa-f]+/);
-  if(!m){
+  if (!m) {
     embed.description = resEm(0) + "Invalid cookie format!";
     await bot.slash.post(data.id, data.token, message);
     return;

@@ -9,7 +9,7 @@ module.exports = async (bot, data) => {
 
   const userId = data.user?.id ?? data.member.user.id;
   const owner = "557260090621558805";
-  if(userId != owner){
+  if (userId != owner) {
     embed.description = resEm(0) + "Only <@" + owner + "> can run this!";
     await bot.slash.post(data.id, data.token, message);
     return;

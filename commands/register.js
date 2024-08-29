@@ -9,7 +9,7 @@ module.exports = async (bot, data, users, handles, loggen) => {
   const embed = { "description": null, "color": 0x7CF2EE };
   const message = { "embeds": [embed], "flags": 64 };
 
-  if(loggen.lock){
+  if (loggen.lock) {
     embed.description = resEm(0) + "The service is currently " +
       "used by someone else, please wait 1-5 minutes and try " +
       "again later."
@@ -21,7 +21,7 @@ module.exports = async (bot, data, users, handles, loggen) => {
   await bot.slash.defer(data.id, data.token, { "flags": 64 });
 
   const clash = await codingame.createClash(ownerId, rememberMe, ["Javascript"], ["FASTEST"]);
-  if (clash.id == 501) {
+  if (clash.id == 501 || clash.id == 500) {
     embed.description = resEm(0) + "Bot login data expired, " +
       "please contact the creator with a request to refresh the cookies!";
     await bot.interactions.patch(data.token, message);
@@ -36,13 +36,13 @@ module.exports = async (bot, data, users, handles, loggen) => {
     parseInt(clash.startTimestamp / 1000) + ":R>.";
   await bot.interactions.patch(data.token, message);
 
-  while(true){
+  while (true) {
     await new Promise(r => setTimeout(r, 5000));
     const res = await codingame.getClash(
       clash.publicHandle
     );
     const players = res.players;
-    if(players.length > 1){
+    if (players.length > 1) {
       const player = players.find(p => p.codingamerId != ownerId);
       await codingame.leaveClash(
         clash.publicHandle, ownerId, rememberMe
@@ -50,7 +50,7 @@ module.exports = async (bot, data, users, handles, loggen) => {
       const user = data.user?.id ?? data.member.user.id;
       const handle = player.codingamerHandle;
       await users[user](e => { e.handle = handle; });
-      await handles[handle](e => { e.user = user; });
+      await handles[handle](e => { e.user_id = user; });
 
       embed.description = resEm(1) + "Logged in as [" +
         player.codingamerNickname + "](https://www.codingame.com/" +
@@ -59,8 +59,8 @@ module.exports = async (bot, data, users, handles, loggen) => {
       loggen.lock = false;
       break;
     }
-    if(data.finished || clash.startTimestamp < Date.now()){
-      if(clash.startTimestamp < Date.now()){
+    if (data.finished || clash.startTimestamp < Date.now()) {
+      if (clash.startTimestamp < Date.now()) {
         await codingame.leaveClash(
           clash.publicHandle, ownerId, rememberMe
         );

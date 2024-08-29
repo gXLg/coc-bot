@@ -1,7 +1,7 @@
 const resEm = require("../utils/response-emoji.js");
 const codingame = require("../utils/codingame.js");
 
-module.exports = async (bot, data, servers, cocs, users, handles) => {
+module.exports = async (bot, data, servers, winners, cocs, users, handles) => {
 
   const embed = { "description": null, "color": 0x7CF2EE };
   const message = { "embeds": [embed], "flags": 64 };
@@ -9,14 +9,14 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
   const userId = data.user?.id ?? data.member.user.id;
   const user = await users[userId](e => e);
 
-  if(!user.handle){
+  if (!user.handle) {
     embed.description = resEm(0) + "You have to connect your " +
       "Codingame account to perform this action! " +
       "To do so, please run the `/register` command.";
     await bot.slash.post(data.id, data.token, message);
     return;
   }
-  if(!user.cookie){
+  if (!user.cookie) {
     embed.description = resEm(0) + "You have to provide your " +
       "login cookie to perform this action! " +
       "To do so, please run the `/cookie` command.";
@@ -32,7 +32,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
 
   const thisGuild = await servers[data.guild_id](e => e);
   const sendChannel = thisGuild.send_channel;
-  if(!sendChannel){
+  if (!sendChannel) {
     embed.description = resEm(0) + "No send channel is set up " +
       "on this guild!";
     await bot.slash.post(data.id, data.token, message);
@@ -40,13 +40,13 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
   }
 
   const lang1 = [
-    "C", "C++", "D", "Go", "Rust", "Swift",
+    "C", "C++", "D", "Go", "OCaml", "Rust", "Swift",
     "TypeScript", "Kotlin", "Java", "Groovy", "Scala"
   ];
   const lang2 = [
     "Bash", "Clojure", "Dart", "F#", "Haskell",
-    "Javascript", "Lua", "ObjectiveC", "OCaml",
-    "Pascal", "Perl", "PHP", "Python3", "Ruby", "VB.NET"
+    "Javascript", "Lua", "ObjectiveC", "Pascal",
+    "Perl", "PHP", "Python3", "Ruby", "VB.NET"
   ];
   const types = ["SHORTEST", "FASTEST", "REVERSE"];
 
@@ -123,7 +123,7 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
   let sel2 = [];
   let type = types;
   let public = "False";
-  while(true) {
+  while (true) {
     const res = await bot.waitForEvent(
       "INTERACTION_CREATE",
       d => d.type == 3 && d.message.interaction?.id == data.id,
@@ -167,11 +167,10 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
   const cc = await codingame.createClash(
     u.codingamer.userId, user.cookie, [...sel1, ...sel2], type
   );
-  if (cc.id == 501) {
+  if (cc.id == 501 || cc.id == 500) {
     embed.description = resEm(0) + "Your login data expired, " +
       "please use `/cookie` again to set a new cookie!";
     await bot.interactions.patch(data.token, message);
-    loggen.lock = false;
     return;
   }
   const clash = await codingame.getClash(cc.publicHandle);
@@ -180,6 +179,6 @@ module.exports = async (bot, data, servers, cocs, users, handles) => {
   await codingame.watchClash(
     bot, data, thisGuild, clash,
     sendChannel, public == "True", cc.publicHandle,
-    cocs, users, servers, handles
+    cocs, users, servers, winners, handles
   );
 };

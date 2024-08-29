@@ -5,6 +5,6 @@ module.exports = function(func) {
     str.indexOf("(") + 1,
     str.indexOf(")")
   ).match(args);
-  if(result == null) return [];
+  if (result == null) return [];
   return result;
 }

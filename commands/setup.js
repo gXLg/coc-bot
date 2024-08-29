@@ -23,9 +23,9 @@ module.exports = async (bot, data, servers) => {
 
   let updated = false;
 
-  if(send_channel){
+  if (send_channel) {
     const c = await bot.channels.get(send_channel);
-    if(c.type != 0){
+    if (c.type != 0) {
       embed.description = resEm(0) + "Wrong channel type provided!";
       await bot.slash.post(data.id, data.token, message);
       return;
@@ -34,7 +34,7 @@ module.exports = async (bot, data, servers) => {
   }
 
   const roles = { };
-  if(playing_role || winner_role){
+  if (playing_role || winner_role) {
     const list = { };
     const ro = await bot.roles.list(data.guild_id);
     ro.forEach(r => list[r.id] = r.position);
@@ -46,14 +46,14 @@ module.exports = async (bot, data, servers) => {
     roles.s = Math.max(...self.roles.map(r => list[r]));
   }
 
-  if(playing_role){
-    if(roles.p >= roles.s){
+  if (playing_role) {
+    if (roles.p >= roles.s) {
       embed.description = resEm(0) + "My role is not high enough " +
         "to assign <@&" + playing_role + "> to players!";
       await bot.slash.post(data.id, data.token, message);
       return;
     }
-    if(playing_role == data.guild_id){
+    if (playing_role == data.guild_id) {
       embed.description = resEm(0) + "Everyone is not a role!";
       await bot.slash.post(data.id, data.token, message);
       return;
@@ -61,14 +61,14 @@ module.exports = async (bot, data, servers) => {
     updated = true;
   }
 
-  if(winner_role){
-    if(roles.w >= roles.s){
+  if (winner_role) {
+    if (roles.w >= roles.s) {
       embed.description = resEm(0) + "My role is not high enough " +
         "to assign <@&" + winner_role + "> to winners!";
       await bot.slash.post(data.id, data.token, message);
       return;
     }
-    if(winner_role == data.guild_id){
+    if (winner_role == data.guild_id) {
       embed.description = resEm(0) + "Everyone is not a role!";
       await bot.slash.post(data.id, data.token, message);
       return;
@@ -76,9 +76,9 @@ module.exports = async (bot, data, servers) => {
     updated = true;
   }
 
-  if(winner_time){
+  if (winner_time) {
     const m = winner_time.match(/^(\d+):(\d\d)$/);
-    if(!m){
+    if (!m) {
       embed.description = resEm(0) + "Wrong time format used!";
       await bot.slash.post(data.id, data.token, message);
       return;
@@ -88,24 +88,26 @@ module.exports = async (bot, data, servers) => {
     await servers[data.guild_id](e => { e.winner_time = time; });
   }
 
-  if(send_channel)
-    await servers[data.guild_id](e => { e.send_channel = send_channel; });
-  if(playing_role)
-    await servers[data.guild_id](e => { e.playing_role = playing_role; });
-  if(ping_role){
-    updated = true;
-    await servers[data.guild_id](e => { e.ping_role = ping_role; });
-  }
-  if(winner_role)
-    await servers[data.guild_id](e => { e.winner_role = winner_role; });
+  const entry = await servers[data.guild_id](e => {
+    if (send_channel) e.send_channel = send_channel;
+    if (playing_role) e.playing_role = playing_role;
+    if (winner_role) e.winner_role = winner_role;
+    if (ping_role) {
+      e.ping_role = ping_role;
+      updated = true;
+    }
 
-  const entry = await servers[data.guild_id](e => e);
+    return e;
+  });
+
   let c;
   const time = [];
-  if(c = parseInt(entry.winner_time / 60))
+  if (c = parseInt(entry.winner_time / 60))
     time.push(c + " hour" + (c == 1 ? "" : "s"));
-  if(c = entry.winner_time % 60)
+  if (c = entry.winner_time % 60)
     time.push(c + " minute" + (c == 1 ? "" : "s"));
+  if (time.length == 0)
+    time.push("No time");
 
   embed.description = [
     resEm(1) + (

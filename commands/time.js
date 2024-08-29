@@ -1,7 +1,7 @@
 const resEm = require("../utils/response-emoji.js");
 const tzSet = Intl.supportedValuesOf("timeZone");
 
-function getTZOff(timeZone){
+function getTZOff(timeZone) {
   const now = new Date();
   const tzString = now.toLocaleString("en-US", { timeZone });
   const localString = now.toLocaleString("en-US");
@@ -23,12 +23,12 @@ module.exports = async (bot, data, users) => {
     o => o.name == "timezone").value;
 
   const t = time.match(/^(2[0-3]|1\d|0?\d):(\d\d)-(2[0-3]|1\d|0?\d):(\d\d)$/);
-  if(!t){
+  if (!t) {
     embed.description = resEm(0) + "Wrong time format!";
     await bot.slash.post(data.id, data.token, message);
     return;
   }
-  if(!tzSet.includes(tz)){
+  if (!tzSet.includes(tz)) {
     embed.description = resEm(0) + "Wrong timezone format or " +
       "this timezone is not supported by the server! " +
       "Use one of timezones from official " +
@@ -46,8 +46,8 @@ module.exports = async (bot, data, users) => {
   const end = (e + 24 * 60 - off) % (24 * 60);
 
   await users[userId](e => {
-    e.available = [start, end];
-    e.timezone = tz;
+    e.available_from = start;
+    e.available_to = end;
   });
 
   embed.description = resEm(1) + "Successfully set " +
