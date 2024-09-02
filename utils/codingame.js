@@ -195,11 +195,11 @@ async function watchClash(
           p => p[3] && cache[p[3]]?.roles
         )?.[3];
 
+        if (winner) await users[winner](e => e.won_games ++);
         if (winner && thisGuild.winner_role) {
           await bot.memberRoles.put(
             data.guild_id, winner, thisGuild.winner_role
           );
-          await users[winner](e => e.won_games ++);
           let index = 0;
           while (true) {
             const a = "@" + index.toString(16).padStart(4, "0");
