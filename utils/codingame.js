@@ -97,7 +97,9 @@ async function watchClash(
     const players = [];
     const role = new Set([...playing]);
     if (clash.finished)
-      clash.players.sort((a, b) => a.rank - b.rank);
+      clash.players.sort((a, b) =>
+        (a.rank != b.rank) ? (a.rank - b.rank) : (a.duration - b.duration)
+      );
     for (const p of clash.players) {
       const nick = p.codingamerNickname;
       const phandle = p.codingamerHandle;
@@ -108,7 +110,7 @@ async function watchClash(
         const m = parseInt(t / 60);
         const s = ((t % 60) + "").padStart(2, 0);
         const d = [];
-        if (langs == "Any" && p.languageId)
+        if (clash.programmingLanguages.length > 0 && p.languageId)
           d.push(p.languageId);
         d.push(p.score == null ? "waiting..." : p.score + "%");
         if (p.score == null) all = false;
