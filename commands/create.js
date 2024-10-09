@@ -40,14 +40,16 @@ module.exports = async (bot, data, servers, winners, cocs, users, handles) => {
   }
 
   const lang1 = [
-    "C", "C++", "D", "Go", "OCaml", "Rust", "Swift",
-    "TypeScript", "Kotlin", "Java", "Groovy", "Scala"
+    "C", "C++", "D", "Dart", "F#", "Go", "Groovy", "Haskell",
+    "Java", "Kotlin", "ObjectiveC", "OCaml", "Pascal", "Rust",
+    "Scala", "Swift", "TypeScript", "VB.NET"
   ];
+
   const lang2 = [
-    "Bash", "Clojure", "Dart", "F#", "Haskell",
-    "Javascript", "Lua", "ObjectiveC", "Pascal",
-    "Perl", "PHP", "Python3", "Ruby", "VB.NET"
+    "Bash", "Clojure", "Javascript", "Lua", "Perl", "PHP",
+    "Python3", "Ruby"
   ];
+
   const types = ["SHORTEST", "FASTEST", "REVERSE"];
 
   embed.description = "Please choose!";
@@ -72,7 +74,7 @@ module.exports = async (bot, data, servers, winners, cocs, users, handles) => {
           "type": 3,
           "custom_id": "langs_second",
           "min_values": 0,
-          "max_values": lang1.length,
+          "max_values": lang2.length,
           "placeholder": "Dynamic languages",
           "options": lang2.map(l => ({ "label": l, "value": l }))
         }

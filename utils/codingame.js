@@ -1,5 +1,6 @@
 const axios = require("axios");
 const resEm = require("./response-emoji.js");
+const { paginate } = require("nullcord").utils;
 
 const api_error = new Error("Could not perform the API request");
 const MAX_RETRY = 5;
@@ -23,9 +24,11 @@ async function watchClash(
     server = s.name;
   }
 
-  let guilds;
-  if (public) guilds = await servers.entries();
-  else guilds = [data.guild_id];
+  const guilds = [];
+  if (public) {
+    const g = await paginate(bot.self.listGuilds, g => g.id, 200);
+    guilds.push(...g);
+  } else guilds.push(data.guild_id);
   const sent = { };
   const playing = new Set();
 
