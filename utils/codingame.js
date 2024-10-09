@@ -26,8 +26,8 @@ async function watchClash(
 
   const guilds = [];
   if (public) {
-    const g = await paginate(bot.self.listGuilds, g => g.id, 200);
-    guilds.push(...g);
+    const gs = await paginate(bot.self.listGuilds, g => g.id, 200);
+    guilds.push(...gs.map(g => g.id));
   } else guilds.push(data.guild_id);
   const sent = { };
   const playing = new Set();
