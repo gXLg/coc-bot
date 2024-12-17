@@ -1,6 +1,6 @@
 {
   "ram": 700,
-  "dependencies": ["screen"]
+  "dependencies": ["screen"],
   "start": "screen -dmS coc-bot -- node .",
   "stop": "screen -S coc-bot -X stuff '^C'"
 }
