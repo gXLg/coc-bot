@@ -1,6 +1,4 @@
 {
-  "ram": 700,
-  "dependencies": ["screen"],
-  "start": "screen -dmS coc-bot -- node .",
-  "stop": "screen -S coc-bot -X stuff '^C'"
+  "ram": 100,
+  "start": "node --max-old-space-size=100 index.js"
 }
