@@ -118,5 +118,17 @@
   {
     "name": "create",
     "description": "Create a clash"
+  },
+  {
+    "name": "eval",
+    "description": "Code evaluation, can only be run by the creator",
+    "options": [
+      {
+        "type": 3,
+        "name": "code",
+        "description": "Code to run",
+        "required": true
+      }
+    ]
   }
 ]
