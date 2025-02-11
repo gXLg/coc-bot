@@ -1,4 +1,5 @@
 const resEm = require("../utils/response-emoji.js");
+const { spawn } = require("child_process");
 
 module.exports = async (bot, data) => {
 
