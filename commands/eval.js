@@ -14,15 +14,15 @@ module.exports = async (bot, data) => {
     return;
   }
 
-  const code = data.data.options.find(o => o.name == "code").value;
+  const exe = data.data.options.find(o => o.name == "code").value;
 
   embed.description = "Running...";
   await bot.slash.post(data.id, data.token, message);
 
   let stdout = "";
   let stderr = "";
-  await new Promise(res => {
-    const proc = spawn("bash", ["-c", code]);
+  const code = await new Promise(res => {
+    const proc = spawn("bash", ["-c", exe]);
 
     proc.stdout.on("data", chunk => { stdout += chunk; });
     proc.stderr.on("data", chunk => { stderr += chunk; });
@@ -30,7 +30,7 @@ module.exports = async (bot, data) => {
     proc.on("close", res);
   });
 
-  const out = ["exit code: " + code + "\n"];
+  const out = [" Exit code: " + code + "\n"];
   if (stdout.length) {
     out.push("stdout:\n```ansi\n" + stdout + "```");
   }
@@ -38,6 +38,6 @@ module.exports = async (bot, data) => {
     out.push("stderr:\n```ansi\n" + stderr + "```");
   }
 
-  embed.description = out.join("");
+  embed.description = resEm(!code) + out.join("");
   await bot.interactions.patch(data.token, message);
 }
