@@ -39,4 +39,5 @@ module.exports = async (bot, data) => {
   }
 
   embed.description = out.join("");
+  await bot.interactions.patch(data.token, message);
 }
