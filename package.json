@@ -17,9 +17,9 @@
   },
   "homepage": "https://github.com/gXLg/coc-bot#readme",
   "dependencies": {
-    "axios": "^1.7.4",
-    "badb": "^1.2.2",
-    "gxlg-utils": "^1.1.2",
+    "axios": "^1.13.2",
+    "badb": "^1.5.0",
+    "gxlg-utils": "^1.4.0",
     "nullcord": "^3.3.2"
   }
 }
